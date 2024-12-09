@@ -100,6 +100,27 @@ services:
     depends_on:
       - php
 
+
+  # background jobs
+  supervisord:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/${DOCKER_WORKDIR}
+      - ./.env:/opt/env/.env
+      - ./docker/supervisord/supervisord.conf:/opt/docker/etc/supervisor.d/queue.conf
+      - ./docker/supervisord/logs/queue-worker.log:/var/log/queue-worker.log
+    networks:
+      - default
+    environment:
+      TZ: ${DOCKER_TIMEZONE}
+      PHP_MEMORY_LIMIT: "4096M"
+      XDEBUG_ENABLED: ${DOCKER_XDEBUG:-off}
+      XDEBUG_CONFIG: "client_host=${DOCKER_XDEBUG_REMOTE_HOST:-host.docker.internal}"
+      PHP_IDE_CONFIG: "serverName=${DOCKER_PHP_IDE_CONFIG}"
+
 networks:
   internet:
     name: internet
