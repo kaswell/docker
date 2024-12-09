@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
     libwebp-dev \
     libxpm-dev \
     libonig-dev \
+    libjpeg-dev \
     openvpn \
     nano \
     zip \
@@ -52,6 +53,7 @@ RUN docker-php-ext-install \
     mbstring \
     soap \
     xml \
+    gd \
     zip
 
 RUN pecl install xdebug \
