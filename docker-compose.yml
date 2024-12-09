@@ -107,14 +107,17 @@ services:
   supervisord:
     build:
       context: .
-      dockerfile: ./docker/php/Dockerfile
+      dockerfile: ./.docker/php/Dockerfile
+      args:
+        HOST_UID: ${HOST_UID}
+        USER_NAME: ${DOCKER_PROJECT_NAME}
+        TZ: ${DOCKER_TIMEZONE}
     restart: unless-stopped
     container_name: supervisord
     volumes:
       - .:/var/www/${DOCKER_WORKDIR}
-      - ./.env:/opt/env/.env
-      - ./docker/supervisord/supervisord.conf:/opt/docker/etc/supervisor.d/queue.conf
-      - ./docker/supervisord/logs/queue-worker.log:/var/log/queue-worker.log
+      - ./.docker/supervisord/supervisord.conf:/opt/docker/etc/supervisor.d/queue.conf
+      - ./.docker/supervisord/logs/queue-worker.log:/var/log/queue-worker.log
     networks:
       - default
     environment:
