@@ -69,6 +69,8 @@ RUN adduser --disabled-password --gecos "" --uid $HOST_UID $USER_NAME
 
 USER $USER_NAME
 
-COPY . /var/www/core
+COPY --chmod=755 . /var/www/core
 
 WORKDIR /var/www/core
+
+ENTRYPOINT ["/etc/entrypoint.sh"]
