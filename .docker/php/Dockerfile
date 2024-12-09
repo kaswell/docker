@@ -63,8 +63,6 @@ RUN pecl install xdebug \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# COPY --chmod=755 ./entrypoint.sh /etc/entrypoint.sh
-
 ARG HOST_UID
 ARG USER_NAME
 RUN adduser --disabled-password --gecos "" --uid $HOST_UID $USER_NAME
@@ -74,5 +72,3 @@ USER $USER_NAME
 COPY --chmod=755 . /var/www/core
 
 WORKDIR /var/www/core
-
-ENTRYPOINT ["/.docker/php/entrypoint.sh"]
