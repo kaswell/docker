@@ -59,5 +59,11 @@ RUN docker-php-ext-install \
 COPY --chmod=755 ./.docker/supervisord/entrypoint.sh /etc/entrypoint.sh
 COPY --chmod=755 . /var/www/core
 
+ARG HOST_UID
+ARG USER_NAME
+RUN adduser --disabled-password --gecos "" --uid $HOST_UID $USER_NAME
+
+USER $USER_NAME
+
 WORKDIR /var/www/core
 ENTRYPOINT ["/etc/entrypoint.sh"]
