@@ -19,7 +19,7 @@
 ## Подготовка
 1. Клонируем репозитории в домашнюю директорию в `~/apps/core`
 ```
-    cd ~/apps
+    mkdir ~/apps && cd ~/apps
     git clone git@github.com:kaswell/docker.git core
 ```
 
