@@ -100,22 +100,6 @@ services:
     depends_on:
       - php
 
-
-  # Worker Service
-  worker:
-    container_name: worker
-    build:
-      context: ./.docker/php/worker
-      args:
-        HOST_UID: ${HOST_UID}
-        USER_NAME: ${DOCKER_PROJECT_NAME}
-        TZ: ${DOCKER_TIMEZONE}
-    working_dir: /var/www/core
-    volumes:
-      - .:/var/www/core
-    depends_on:
-      - php
-
 networks:
   internet:
     name: internet
