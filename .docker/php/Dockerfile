@@ -73,4 +73,5 @@ COPY --chmod=755 . /var/www/core
 
 WORKDIR /var/www/core
 
+COPY --chmod=755 ./.docker/php/entrypoint.sh /etc/entrypoint.sh
 ENTRYPOINT ["/etc/entrypoint.sh"]
