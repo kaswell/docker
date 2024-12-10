@@ -17,7 +17,13 @@ services:
       APP_HOST: ${APP_HOST}
       API_HOST: ${API_HOST}
     depends_on:
+      php:
+        condition: service_started
+      scheduler:
+        condition: service_started
       mysql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       internet:
@@ -46,7 +52,7 @@ services:
       mysql:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     environment:
       TZ: ${DOCKER_TIMEZONE}
       PHP_MEMORY_LIMIT: "4096M"
@@ -63,6 +69,7 @@ services:
       TZ: ${DOCKER_TIMEZONE}
       MYSQL_ROOT_PASSWORD: ${DOCKER_DB_PASSWORD}
       MYSQL_DATABASE: ${DOCKER_DB_NAME}
+    restart: unless-stopped
     ports:
       - 3306:3306
     volumes:
@@ -82,9 +89,15 @@ services:
     container_name: redis
     ports:
       - 6379:6379
+    restart: unless-stopped
     volumes:
       - ./.docker/redis/data:/var/lib/redis
       - ./.docker/logs/redis:/var/log/redis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
     environment:
       TZ: ${DOCKER_TIMEZONE}
     networks:
@@ -94,11 +107,13 @@ services:
   scheduler:
     image: mcuadros/ofelia:latest
     container_name: scheduler
+    restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./.docker/scheduler/config.ini:/etc/ofelia/config.ini
     depends_on:
-      - php
+      php:
+        condition: service_started
     networks:
       - internet
 
