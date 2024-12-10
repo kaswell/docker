@@ -10,7 +10,6 @@ services:
     volumes:
       - .:/var/www/core
       - ./.docker/nginx/conf.d:/etc/nginx/conf.d
-      - ./.docker/logs/nginx:/var/log/nginx
       - ./.docker/nginx/certs:/etc/nginx/certs
     environment:
       WORKDIR: /var/www/core
@@ -47,7 +46,6 @@ services:
       - .:/var/www/core
       - ./.docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./.docker/php/conf.d/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
-      - ./.docker/logs/php:/var/log/php
     depends_on:
       mysql:
         condition: service_healthy
@@ -74,7 +72,6 @@ services:
       - 3306:3306
     volumes:
       - ./.docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./.docker/logs/mysql:/var/log/mysql
       - ./.docker/mysql/data:/var/lib/mysql
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
@@ -92,7 +89,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./.docker/redis/data:/var/lib/redis
-      - ./.docker/logs/redis:/var/log/redis
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
