@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y \
     libxpm-dev \
     libonig-dev \
     libjpeg-dev \
+    libxml2-dev \
     openvpn \
     nano \
     zip \
@@ -39,7 +40,6 @@ RUN apt-get update && apt-get install -y \
     openssl \
     libssl-dev \
     libhiredis-dev
-
 
 RUN docker-php-ext-install \
     opcache \
@@ -58,7 +58,7 @@ RUN docker-php-ext-install \
 
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
-    && php -v  # Confirm installation and version of PHP and loaded extensions
+    && php -v
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -69,6 +69,6 @@ RUN adduser --disabled-password --gecos "" --uid $HOST_UID $USER_NAME
 
 USER $USER_NAME
 
-COPY . /var/www/core
+COPY --chmod=755 . /var/www/core
 
 WORKDIR /var/www/core

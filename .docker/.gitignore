@@ -1,0 +1,4 @@
+logs
+mysql/data
+nginx/certs
+redis/data

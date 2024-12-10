@@ -1,5 +1,5 @@
 services:
-  # Core Service
+  # Nginx Service
   nginx:
     container_name: nginx
     build: ./.docker/nginx
@@ -8,12 +8,12 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - .:/var/www/${DOCKER_WORKDIR}
+      - .:/var/www/core
       - ./.docker/nginx/conf.d:/etc/nginx/conf.d
       - ./.docker/logs/nginx:/var/log/nginx
       - ./.docker/nginx/certs:/etc/nginx/certs
     environment:
-      WORKDIR: ${DOCKER_WORKDIR}
+      WORKDIR: /var/www/core
       APP_HOST: ${APP_HOST}
       API_HOST: ${API_HOST}
     depends_on:
@@ -26,6 +26,7 @@ services:
           - api.core.local
           - admin.core.local
 
+  # PHP Service
   php:
     container_name: php
     build:
@@ -34,14 +35,17 @@ services:
         HOST_UID: ${HOST_UID}
         USER_NAME: ${DOCKER_PROJECT_NAME}
         TZ: ${DOCKER_TIMEZONE}
-    working_dir: /var/www/${DOCKER_WORKDIR}
+    working_dir: /var/www/core
     restart: unless-stopped
     ports:
       - 9000:9000
+      - 9001:9001
+      - 9003:9003
     volumes:
-      - .:/var/www/${DOCKER_WORKDIR}
+      - .:/var/www/core
       - ./.docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./.docker/php/conf.d/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+      - ./.docker/logs/php:/var/log/php
     depends_on:
       mysql:
         condition: service_healthy
@@ -55,7 +59,10 @@ services:
       PHP_IDE_CONFIG: "serverName=${DOCKER_PHP_IDE_CONFIG}"
     networks:
       - internet
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
+  # Mysql Service
   mysql:
     container_name: mysql
     image: mysql:8.4.3
@@ -76,7 +83,7 @@ services:
     networks:
       - internet
 
-
+  # Redis Service
   redis:
     image: redis:latest
     container_name: redis
@@ -99,6 +106,8 @@ services:
       - ./.docker/scheduler/config.ini:/etc/ofelia/config.ini
     depends_on:
       - php
+    networks:
+      - internet
 
 networks:
   internet:
