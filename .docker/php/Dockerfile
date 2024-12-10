@@ -56,9 +56,14 @@ RUN docker-php-ext-install \
     gd \
     zip
 
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug \
-    && php -v
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
+RUN install-php-extensions xdebug
+
+#RUN pecl install xdebug \
+#    && docker-php-ext-enable xdebug \
+#    && php -v \
+
+ENV PHP_IDE_CONFIG 'serverName=core.local'
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
