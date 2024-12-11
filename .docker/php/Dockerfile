@@ -56,14 +56,14 @@ RUN docker-php-ext-install \
     gd \
     zip
 
+# Установите расширение xdebug
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
 RUN install-php-extensions xdebug
-
-#RUN pecl install xdebug \
-#    && docker-php-ext-enable xdebug \
-#    && php -v \
-
 ENV PHP_IDE_CONFIG 'serverName=core.local'
+
+# Установите расширение Redis
+RUN pecl install redis && docker-php-ext-enable redis
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer

@@ -87,8 +87,6 @@ services:
     ports:
       - 6379:6379
     restart: unless-stopped
-    volumes:
-      - ./.docker/redis/data:/var/lib/redis
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
